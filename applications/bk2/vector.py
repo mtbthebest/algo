@@ -42,6 +42,7 @@ class Vector:
     def __radd__(self, other):
         return self + other
 
+
     def __iadd__(self, other):
         if len(self._coords) != len(other._coords):
             raise ValueError("Dimension do not match")
@@ -60,6 +61,9 @@ class Vector:
 
         return v
 
+    def __rsub__(self, other):
+        return self - other
+
     def __mul__(self, other):
         print(other, "yr ")
         if isinstance(other, Vector):
@@ -74,7 +78,7 @@ class Vector:
 
     def __rmul__(self, other):
         print(other, "rmul ")
-        return self
+        return self * other
 
     def __eq__(self, other):
         return other._coords == self._coords
@@ -97,6 +101,7 @@ class Vector:
         return not self == other
 
     def dot_product(self, other):
+        """Returns dot product"""
         if len(self._coords) != len(other._coords):
             raise ValueError("Dimension do not match")
         return sum((self[i] * other[i]) for i in range(self.d))
@@ -121,3 +126,4 @@ if __name__ == '__main__':
     z3 = u*2
     z3 += z3
     print(z3)
+    print(abs(z3))
