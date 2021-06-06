@@ -88,6 +88,45 @@ class LinkedQueue:
         return res
 
 
+class DoublyLinkedBase:
+    class _Node:
+        def __init__(self, element, prev_node, next_node):
+            self.element = element
+            self.next = next_node
+            self.prev_node = prev_node
+
+    def __init__(self):
+        self.header = self._Node(None, None, None)
+        self.trailer = self._Node(None, None, None)
+        self.header.next = self.trailer
+        self.trailer.prev = self.header
+        self.size = 0
+
+    def __len__(self):
+        return self.size
+
+    def is_empty(self):
+        return self.size == 0
+
+    def insert_between(self, e, predecessor, successor):
+        node = self._Node(e, predecessor, successor)
+        predecessor.next = node
+        successor.prev = node
+        self.size += 1
+
+        return node
+
+    def delete(self, node):
+        if self.size == 0:
+            raise ValueError
+        node.prev.next = node.next
+        node.next.prev = node.prev
+        self.size -= 1
+        el = node.element
+        node.prev = node.next = node.element = None
+        return el
+
+
 class Tree(abc.ABC):
     class Node:
         _id = 0
