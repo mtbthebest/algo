@@ -1,2 +1,6 @@
 
 .idea/
+
+data_structures/__pycache__/
+
+graph_algo/__pycache__/
