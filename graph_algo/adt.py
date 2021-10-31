@@ -1,7 +1,8 @@
 from math import log2, ceil
 from data_structures import LinkedQueue
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import random
+import copy
 
 
 class EmptyError(Exception):
@@ -19,7 +20,7 @@ class Vertex:
         return self.value
 
     def __eq__(self, other):
-        return self.value == self.value
+        return self.value == other.value
 
     def __hash__(self):
         return self.value
@@ -43,6 +44,10 @@ class Edge:
         self.head = head
         self.tail = tail
         self.weight = weight
+
+    def __getitem__(self, item):
+        assert item in [0, 1]
+        return self.head if item == 0 else self.tail
 
     def __iter__(self):
         return iter([self.head, self.tail])
@@ -94,8 +99,11 @@ class Graph:
     def __iter__(self):
         raise NotImplementedError
 
+    def adjacent(self, vertex):
+        raise NotImplementedError
+
     def is_adjacent(self, u, v):
-        pass
+        return u in self.adjacent(v)
 
     def get_vertex_degree(self, vertex, mode="out"):
         pass
@@ -261,8 +269,9 @@ class MatrixGraph(Graph):
 class MapGraph(Graph):
 
     def __init__(self):
-        super(Graph, self).__init__()
-        self.data = defaultdict(dict)
+        super().__init__()
+        self.data = defaultdict(OrderedDict)
+        self.num_edges = 0
 
     def __iter__(self):
         return self.edges
@@ -271,23 +280,26 @@ class MapGraph(Graph):
         head, tail = edge
         self.data[head][tail] = edge
         self.data[tail][head] = edge
+        self.num_edges += 1
 
     def remove_edge(self, edge):
         head, tail = edge
         del self.data[head][tail]
         del self.data[tail][head]
+        self.num_edges -= 1
 
     def adjacent(self, vertex):
-        return self.data[vertex]
+        for edge in sorted(self.data[vertex].values(), key=lambda e: (e[0].v, e[1].v)):
+            yield edge[0] if edge[0] != vertex else edge[1]
 
     @property
     def vertices(self):
-        for vertice in set(self.data.keys()):
-            yield vertice
+        for vertex in sorted(self.data.keys(), key=lambda v: v.value):
+            yield vertex
 
     @property
     def edges(self):
-        for edge in set(edge for _, vl in self.data.items() for _, edge in vl.items()):
+        for edge in sorted(set(edge for _, vl in self.data.items() for _, edge in vl.items()), key=lambda e: (e[0].v, e[1].v)):
             yield edge
 
     def __repr__(self):
@@ -299,3 +311,31 @@ class MapGraph(Graph):
             for j in range(i):
                 if random.random() < p:
                     self.insert_edge(Edge(Vertex(i), Vertex(j)))
+
+    def get_edge(self, head, tail):
+        return self.data[head].get(tail)
+
+    def count_edge(self):
+        return self.num_edges
+
+    def count_vertices(self):
+        return len(self.data)
+
+    def __deepcopy__(self, memodict):
+        obj = MapGraph()
+        print(obj)
+        memodict[id(obj)] = obj
+        for edge in self.edges:
+            head, tail = edge
+            head, tail = copy.deepcopy(head), copy.deepcopy(tail)
+            self.__class__.insert_edge(obj, Edge(head, tail))
+        return obj
+
+    def __copy__(self):
+        obj = MapGraph()
+        obj.__dict__.update(self.__dict__)
+        return obj
+
+    def print_edge(self, edge):
+        head, tail = edge.head, edge.tail
+        print(f"{head.value}-{tail.value}")
