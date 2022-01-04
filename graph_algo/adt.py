@@ -324,7 +324,13 @@ class MapGraph(Graph):
         return self.num_edges
 
     def count_vertices(self):
-        return len(self.data)
+        return len(list(self.vertices))
+
+    def indegree(self, vertex):
+        return sum(map(lambda e: e[1] == vertex, self.edges))
+
+    def outdegree(self, vertex):
+        return len(self.data.get(vertex)) if self.data.get(vertex) is not None else 0
 
     def __deepcopy__(self, memodict):
         obj = MapGraph(directed=self.directed)
