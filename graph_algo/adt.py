@@ -3,7 +3,8 @@ from data_structures import LinkedQueue
 from collections import defaultdict, OrderedDict
 import random
 import copy
-from functools import  reduce
+from functools import reduce
+
 
 class EmptyError(Exception):
     ...
@@ -342,7 +343,7 @@ class MapGraph(Graph):
             if id(tail) not in memodict:
                 memodict[id(tail)] = copy.deepcopy(tail)
             head, tail = memodict[id(head)], memodict[id(tail)]
-            obj.insert_edge(Edge(head, tail))
+            obj.insert_edge(Edge(head, tail, weight=edge.weight))
         return obj
 
     def __copy__(self):

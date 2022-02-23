@@ -59,6 +59,7 @@ class SortedPriorityQueue(PriorityQueueBase):
         return len(self._data)
 
     def add(self, key, value):
+        print(key, value)
         item = self.Item(key, value)
         if self.is_empty():
             self._data.append(item)
@@ -84,3 +85,10 @@ class SortedPriorityQueue(PriorityQueueBase):
 
     def __repr__(self):
         return repr(self._data)
+
+    def contains(self, value):
+        for item in self._data:
+            if item.value == value:
+                return True
+
+        return False
