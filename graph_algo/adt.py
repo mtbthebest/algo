@@ -57,7 +57,8 @@ class Edge:
         return hash((self.head, self.tail))
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.head}, {self.tail})"
+        weight = ', ' + str(self.weight) if self.weight is not None else ''
+        return f"{self.__class__.__name__}({self.head}, {self.tail}{weight})"
 
 
 class Path:
@@ -318,7 +319,9 @@ class MapGraph(Graph):
                 if random.random() < p:
                     self.insert_edge(Edge(Vertex(i), Vertex(j)))
 
-    def get_edge(self, head, tail):
+    def get_edge(self, head, tail, test=False):
+        if test:
+            print("Head ",head, tail)
         return self.data[head].get(tail)
 
     def count_edges(self):
