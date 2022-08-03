@@ -8,3 +8,5 @@ graph_algo/__pycache__/
 .virtual_documents/
 
 .ipynb_checkpoints/
+
+.vscode/
